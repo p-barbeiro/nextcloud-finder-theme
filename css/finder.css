@@ -1,0 +1,465 @@
+/* Finder Theme for Nextcloud 35: macOS Finder-style Files app.
+   Floating sidebar + full-width list panel, Immich-style header.
+   Nextcloud variables + color-mix, so light and dark modes both adapt.
+   Body attributes: data-theme-light / data-theme-dark / data-theme-default. */
+
+/* ---------- Page header: dark title bar in dark mode, light in light mode ---------- */
+/* Immich-style layout: logo on the left, search right-aligned next to the
+   notification / avatar buttons, at Immich's 22rem width. body prefix:
+   core header.css loads after this and has the same specificity. */
+body #header {
+  --unified-search-width: 22rem;
+}
+body #header .header-start {
+  flex: 1 1 auto;
+}
+/* !important: measured header-end still at flex 1 0 0% (a core rule with
+   higher specificity), which kept the search centered */
+body #header .header-end {
+  flex: 0 0 auto !important;
+}
+body #header .header-center {
+  margin-inline-end: 16px;
+}
+
+/* Search field as in Immich: 36px, 8px corners, flat translucent gray,
+   18px icon + placeholder left-aligned (NC centers them), no ⌘K hint */
+#header .unified-search-input__field {
+  --search-icon-pad: 10px;
+  --search-icon-size: 18px;
+  --search-icon-gap: 8px;
+  height: 36px;
+  border-radius: 8px;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+#header .unified-search-input__resting {
+  transform: none;
+  color: rgb(60 60 67 / 0.6);
+  font-size: 15px;
+}
+#header .unified-search-input__input {
+  font-size: 15px;
+}
+#header .unified-search-input__shortcut {
+  display: none !important;
+}
+body[data-theme-dark] #header .unified-search-input__resting {
+  color: rgb(235 235 245 / 0.6);
+}
+@media (prefers-color-scheme: dark) {
+  body[data-theme-default] #header .unified-search-input__resting {
+    color: rgb(235 235 245 / 0.6);
+  }
+}
+
+/* Header buttons: monochrome 75% like Immich; avatar with an accent ring */
+#header .header-end .header-menu__trigger {
+  color: color-mix(in srgb, var(--color-background-plain-text) 75%, transparent);
+  opacity: 1;
+}
+#header .notifications-button__icon {
+  opacity: 0.75;
+}
+#header .user-menu__avatar {
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--nc-accent);
+}
+/* Logo at Immich's 28px height, vertically centered (NC positions it
+   absolute with top/bottom: 1px, i.e. full header height) */
+#header #nextcloud {
+  padding-inline-start: 74px; /* 12 + 50 logo + 12 */
+}
+#header #nextcloud .logo {
+  width: 50px;
+  height: 28px;
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+}
+/* Files-only instance: no app menu ("Applications"), no contacts menu (as in
+   Immich). The app menu component replaces its mount node, so everything in
+   header-start except the logo is hidden rather than matching an id. */
+body #header .header-start > :not(#nextcloud),
+body #header #contactsmenu {
+  display: none !important;
+}
+#header .unified-search-input__field {
+  --resting-background: rgba(255, 255, 255, .08);
+  --resting-background-hover: rgba(255, 255, 255, .14);
+}
+body[data-theme-light] {
+  --color-background-plain: #e8e8ea;
+  --color-background-plain-text: #1d1d1f;
+  --background-image-invert-if-bright: invert(100%);
+}
+body[data-theme-light] #header .unified-search-input__field {
+  --resting-background: rgba(0, 0, 0, .06);
+  --resting-background-hover: rgba(0, 0, 0, .10);
+}
+@media (prefers-color-scheme: light) {
+  body[data-theme-default] {
+    --color-background-plain: #e8e8ea;
+    --color-background-plain-text: #1d1d1f;
+    --background-image-invert-if-bright: invert(100%);
+  }
+  body[data-theme-default] #header .unified-search-input__field {
+    --resting-background: rgba(0, 0, 0, .06);
+    --resting-background-hover: rgba(0, 0, 0, .10);
+  }
+}
+
+/* ---------- Accent: #50a3e8 in both modes ----------
+   NC derives its primary variables from one admin color (and may shift it
+   for contrast); these pin the exact accent. */
+body[data-theme-light],
+body[data-theme-dark],
+body[data-theme-default] {
+  --nc-accent: #50a3e8;
+  --nc-accent-hover: #3d8fd4;
+}
+body[data-theme-light],
+body[data-theme-dark],
+body[data-theme-default] {
+  --color-primary: var(--nc-accent);
+  --color-primary-hover: var(--nc-accent-hover);
+  --color-primary-text: #ffffff;
+  --color-primary-light: color-mix(in srgb, var(--nc-accent) 15%, var(--color-main-background));
+  --color-primary-light-hover: color-mix(in srgb, var(--nc-accent) 22%, var(--color-main-background));
+  --color-primary-light-text: var(--nc-accent);
+  --color-primary-element: var(--nc-accent);
+  --color-primary-element-hover: var(--nc-accent-hover);
+  --color-primary-element-text: #ffffff;
+  --color-primary-element-light: color-mix(in srgb, var(--nc-accent) 15%, var(--color-main-background));
+  --color-primary-element-light-hover: color-mix(in srgb, var(--nc-accent) 22%, var(--color-main-background));
+  --color-primary-element-light-text: var(--nc-accent);
+  /* Same header height as the Immich theme (56px instead of NC's 44px);
+     --body-height and the layout derive from it */
+  --header-height: 56px;
+}
+
+/* Unchecked checkboxes: discreet gray outline (NC paints them in the
+   accent); checked ones keep the accent fill */
+body .checkbox-radio-switch .checkbox-content__icon:not(.checkbox-content__icon--checked) > * {
+  color: color-mix(in srgb, var(--color-main-text) 30%, transparent);
+}
+body .checkbox-radio-switch:hover .checkbox-content__icon:not(.checkbox-content__icon--checked) > * {
+  color: color-mix(in srgb, var(--color-main-text) 50%, transparent);
+}
+
+/* Toasts (NC 35 CSS-module container, fixed at bottom: 8px; the navOpen
+   variant adds the 300px sidebar to left). Matched by class prefix, since
+   the hash suffix can change on updates. Lifted above the Files status bar
+   (8px panel inset + 28px bar + 12px) and aligned inside the files panel. */
+[class*="_toastContainer_"] {
+  bottom: 48px !important;
+}
+@media (min-width: 1024px) {
+  [class*="_toastContainer_navOpen_"] {
+    left: 324px !important;  /* 8 + 300 sidebar + 8 + 8 inside the panel */
+  }
+  html[data-nc-rail] [class*="_toastContainer_navOpen_"] {
+    left: 74px !important;   /* 8 + 50 rail + 8 + 8 inside the panel */
+  }
+}
+
+/* ---------- Sidebar: floating source list (folder tree is the native section) ---------- */
+/* Always visible on desktop: no collapse button. Below 1024px (NC's isMobile)
+   the toggle stays, otherwise the sidebar is unreachable. */
+@media (min-width: 1024px) {
+  #content-vue.app-files .app-navigation-toggle-wrapper {
+    display: none;
+  }
+  #content-vue.app-files .app-navigation {
+    margin: 8px;
+    height: calc(100% - 16px);
+    border-radius: 14px;
+    border-inline-end: none;
+  }
+  /* Files pane as a panel like the sidebar: same 8px inset (inline-start is
+     covered by the sidebar's margin) and 14px corners. NcAppContent sets
+     margin: 0 !important, hence the !important here. */
+  #content-vue.app-files #app-content-vue {
+    margin: 8px 8px 8px 0 !important;
+    height: calc(100% - 16px);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    /* NC reserves var(--footer-height) at the bottom; the sticky status bar
+       would sit above it instead of on the panel's edge */
+    padding-block-end: 0;
+  }
+}
+#content-vue.app-files .app-navigation {
+  background-color: color-mix(in srgb, var(--color-main-text) 5%, var(--color-main-background));
+  backdrop-filter: none;
+}
+
+/* Rail toggle (button injected by js/rail.js), left of the
+   search field. !important resets NC's global button styles. */
+.app-navigation-search .nc-rail-toggle {
+  display: flex;
+  flex: 0 0 34px;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 8px;
+  background: transparent !important;
+  color: color-mix(in srgb, var(--color-main-text) 75%, transparent);
+  cursor: pointer;
+}
+.app-navigation-search .nc-rail-toggle:hover {
+  background-color: color-mix(in srgb, var(--color-main-text) 8%, transparent) !important;
+}
+@media (max-width: 1023px) {
+  .nc-rail-toggle {
+    display: none;
+  }
+}
+
+/* Rail mode: icons only. Search, names, folder-tree children, captions and
+   the quota bar are hidden; names stay available as tooltips. */
+@media (min-width: 1024px) {
+  #content-vue.app-files .app-navigation {
+    transition: width var(--animation-quick), min-width var(--animation-quick);
+  }
+  /* 34px square entries (same as the toggle) + 8px each side */
+  html[data-nc-rail] #content-vue.app-files .app-navigation {
+    width: 50px;
+    min-width: 50px;
+  }
+  html[data-nc-rail] #content-vue.app-files .app-navigation-entry {
+    width: 34px !important;
+    min-height: 34px;
+    height: 34px;
+    margin-inline: auto;
+  }
+  html[data-nc-rail] #content-vue.app-files .app-navigation-entry-wrapper {
+    justify-content: center;
+  }
+  html[data-nc-rail] #content-vue.app-files .app-navigation-search {
+    justify-content: center;
+  }
+  html[data-nc-rail] #content-vue.app-files .app-navigation-search__input,
+  html[data-nc-rail] #content-vue.app-files .app-navigation-search__actions,
+  html[data-nc-rail] #content-vue.app-files .app-navigation .icon-collapse,
+  html[data-nc-rail] #content-vue.app-files .app-navigation-entry__name,
+  html[data-nc-rail] #content-vue.app-files .app-navigation-entry__utils,
+  html[data-nc-rail] #content-vue.app-files .app-navigation-entry__children,
+  html[data-nc-rail] #content-vue.app-files .app-navigation-caption,
+  html[data-nc-rail] #content-vue.app-files .app-navigation progress {
+    display: none !important;
+  }
+  html[data-nc-rail] #content-vue.app-files .app-navigation-entry-link {
+    justify-content: center;
+    padding-inline: 0;
+  }
+}
+#content-vue.app-files .app-navigation-entry {
+  border-radius: 8px;
+  font-size: 13px;
+}
+/* macOS 26 sidebar icons are monochrome */
+#content-vue.app-files .app-navigation-entry-icon {
+  color: color-mix(in srgb, var(--color-main-text) 75%, transparent);
+}
+#content-vue.app-files .app-navigation-entry.active {
+  background-color: color-mix(in srgb, var(--color-main-text) 9%, transparent) !important;
+}
+#content-vue.app-files .app-navigation-entry.active .app-navigation-entry-link,
+#content-vue.app-files .app-navigation-entry.active .app-navigation-entry__name {
+  color: var(--color-main-text) !important;
+}
+#content-vue.app-files .app-navigation-caption__name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-maxcontrast);
+}
+
+/* ---------- Details panel (right): same floating style as the sidebar ---------- */
+@media (min-width: 1024px) {
+  #content-vue.app-files .app-sidebar {
+    margin: 8px 8px 8px 0;
+    height: calc(100% - 16px);
+    border-inline-start: none;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-main-text) 5%, var(--color-main-background));
+  }
+}
+#content-vue.app-files .app-sidebar-header__figure {
+  border-radius: 10px;
+}
+
+/* ---------- Toolbar ---------- */
+/* + / breadcrumbs, no separator line under them.
+   Finder toolbar buttons are neutral; blue is only an accent (selection,
+   checkboxes). Re-scoping the primary variables turns the "+" gray. */
+/* NC reserves clickable-area + 2*padding (42px) on the left for the sidebar
+   toggle, which is hidden on desktop (kept below 1024px) */
+@media (min-width: 1024px) {
+  body #app-content-vue .files-list__header {
+    margin-inline: var(--app-navigation-padding, 4px);
+  }
+}
+body #app-content-vue .files-list__header {
+  --color-primary-element: var(--color-main-background);
+  --color-primary-element-hover: color-mix(in srgb, var(--color-main-text) 8%, var(--color-main-background));
+  --color-primary-element-text: var(--color-main-text);
+  --color-primary-text: var(--color-main-text);
+}
+/* "+" as an icon-only glass capsule (the "New" label is hidden; the button
+   keeps its aria-label and menu) */
+#app-content-vue .files-list__header .upload-picker .action-item__menutoggle,
+body .files-list__header-upload-button--narrow .action-item__menutoggle {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 999px !important;
+  box-shadow: 0 0 0 .5px color-mix(in srgb, var(--color-main-text) 12%, transparent),
+              0 1px 4px rgba(0, 0, 0, .12) !important;
+}
+#app-content-vue .files-list__header .upload-picker .action-item__menutoggle .button-vue__text {
+  display: none;
+}
+
+/* No Type / Modified / People filter buttons in the toolbar (Finder has none) */
+#app-content-vue .files-list__header [class^="_fileListFilters"] {
+  display: none;
+}
+/* Zebra stripes are list-only */
+#app-content-vue .files-list--grid .files-list__tbody {
+  background-image: none;
+}
+
+/* NC hides the empty table with visibility:hidden, which still takes space */
+#app-content-vue .files-list__table--hidden {
+  display: none;
+}
+
+/* List / empty state fill the remaining height */
+#app-content-vue .files-list__table:not(.files-list__table--hidden),
+#app-content-vue .files-list__empty {
+  flex-grow: 1;
+}
+#app-content-vue .files-list__empty {
+  height: auto;
+  padding-block: 48px;
+}
+
+/* ---------- List: Finder list view ---------- */
+/* Row height stays at the native 44px: the virtual list hardcodes
+   itemHeight 44 for scroll math, so a smaller --row-height leaves gaps. */
+#app-content-vue .files-list {
+  font-size: 13px;
+}
+
+/* Zebra stripes painted on tbody, not per row: the virtual list recycles
+   rows, so nth-child parity would flicker while scrolling. The tbody padding
+   is a multiple of 44px, so the stripes stay aligned with the rows.
+   Inset from the edges like Finder (content-box clip + inline padding). */
+#app-content-vue .files-list__tbody {
+  padding-inline: 8px;
+  background-clip: content-box;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 44px,
+    color-mix(in srgb, var(--color-main-text) 4%, transparent) 44px 88px
+  );
+}
+#app-content-vue .files-list__tbody tr {
+  border-block-end: none;
+  border-radius: 6px;
+}
+
+/* Folders in Finder's light blue */
+#app-content-vue .files-list__row-icon .folder-icon,
+#app-content-vue .files-list__row-icon .folder-open-icon {
+  color: #4fa3e8;
+}
+
+/* Column headers: small, semibold, no dividers */
+#app-content-vue .files-list__row-head th,
+#app-content-vue .files-list__row-head th button {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-maxcontrast);
+}
+
+/* Size / modified: muted, wide enough for untruncated headers */
+#app-content-vue .files-list__row-size,
+#app-content-vue .files-list__row-mtime {
+  color: var(--color-text-maxcontrast);
+  font-size: 12px;
+}
+#app-content-vue .files-list__row-size { width: 100px; }
+#app-content-vue .files-list__row-mtime { width: 150px; }
+#app-content-vue .files-list__row-name-ext {
+  color: var(--color-text-maxcontrast);
+}
+
+/* Hover subtle; selection in the accent color, light enough that the
+   checked checkbox (also accent) stays visible */
+#app-content-vue .files-list__row:hover {
+  background-color: color-mix(in srgb, var(--color-main-text) 6%, transparent);
+}
+#app-content-vue .files-list__row:has(.files-list__row-checkbox input:checked),
+#app-content-vue .files-list__row--active {
+  background-color: color-mix(in srgb, var(--color-primary-element) 22%, transparent);
+}
+
+/* Footer ("1 file · 1 folder") as Finder's status bar: the table becomes a
+   flex column so the footer sits at the bottom of the full-height list,
+   and stays sticky when the list is longer than the window. */
+#app-content-vue .files-list__table:not(.files-list__table--hidden) {
+  display: flex;
+  flex-direction: column;
+}
+#app-content-vue .files-list__table > thead,
+#app-content-vue .files-list__table > tbody,
+#app-content-vue .files-list__table > tfoot {
+  width: 100%;
+}
+/* Thin status bar with explicit geometry: 28px bar, row fills it, cells
+   centered with no vertical padding, empty icon slot removed */
+/* The row would not stretch to the bar (measured: content-sized 19px, top-
+   aligned, even with flex: 1 / height: 100%). So the bar is sized by equal
+   padding around a content-sized row with no bottom border: centered by
+   construction. */
+body #app-content-vue .files-list__tfoot tr {
+  height: auto !important;
+  min-height: 0;
+  margin: 0 !important;   /* measured: 8px bottom margin pushed text up */
+  border: none !important; /* measured: 1px top border = double hairline */
+  align-items: center;
+}
+body #app-content-vue .files-list__tfoot th,
+body #app-content-vue .files-list__tfoot td {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-block: 0;
+  line-height: 1;
+}
+body #app-content-vue .files-list__tfoot .files-list__row-icon {
+  display: none;
+}
+body #app-content-vue .files-list__tfoot {
+  --row-height: 28px;
+  height: auto;
+  padding-block: 7px;
+  box-sizing: border-box;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  font-size: 11px;
+  color: var(--color-text-maxcontrast);
+  border-top: 1px solid var(--color-border);
+}
