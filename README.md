@@ -12,6 +12,13 @@ A Nextcloud app that gives the **Files** app a macOS Finder-style look.
 
 Tested on **Nextcloud 35.0.2**.
 
+## Screenshots
+
+| | Light | Dark |
+|---|---|---|
+| Sidebar | ![Light, sidebar](screenshots/light-sidebar.png) | ![Dark, sidebar](screenshots/dark-sidebar.png) |
+| Icons-only rail | ![Light, rail](screenshots/light-rail.png) | ![Dark, rail](screenshots/dark-rail.png) |
+
 ## Install
 
 Clone into your apps directory as `finder_theme` and enable it. Example for
